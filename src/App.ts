@@ -10,6 +10,7 @@ import { createServer, Server } from "http"
 import socketIO, { Server as socketServer } from "socket.io"
 import v1 from "./routes/v1"
 import { urlencoded, json } from "body-parser"
+import { connect } from "mongoose"
 
 
 export default class App {
