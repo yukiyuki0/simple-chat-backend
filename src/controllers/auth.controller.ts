@@ -12,24 +12,28 @@ import { User } from "../models/User"
 const authRepo = new AuthRepository()
 
 export const register = async (req: Request, res: Response, next: NextFunction) => {
-  const { username, password } = req.body
+  const {username, password} = req.body
 
-  if ( !username || !password ) return res.status(500).send({ error: "No input data" })
+  if (!username || !password) return res.status(500).send({error: "No input data"})
 
   const user = <User>{
     username: username,
     password: password,
     profilePic: ''
   }
+  try {
+    const users = await authRepo.read({username: user.username})
+    if (users.length) {
+      return res.status(500).send({error: "Exist user"})
+    }
 
-  const users = await authRepo.read({username: user.username})
-  if (users.length) {
-    return res.status(500).send({ error: "Exist user" })
+    await authRepo.create(user)
+
+    console.log("Created user", user)
+
+    return res.status(200).send({user})
+  } catch (e) {
+    next(e)
   }
 
-  await authRepo.create(user)
-
-  console.log("Created user", user)
-
-  return res.status(200).send({user})
 }
