@@ -7,25 +7,25 @@
 //
 
 import { DocumentQuery, Query } from "mongoose"
-import { User, model as UserModel } from "../models/User"
+import { User, UserDocument, model } from "../models/User"
 
 export class AuthRepository {
   constructor() {}
 
-  create(user: User): Promise<User> {
-    const u = new UserModel(user)
+  create(user: UserDocument): Promise<User> {
+    const u = new model(user)
     return u.save()
   }
 
   read(query: any): DocumentQuery<User[], User> {
-    return UserModel.find(query)
+    return model.find(query)
   }
 
-  update(user: User): Query<number> {
-    return UserModel.update({username: user.username}, {...user})
+  update(user: UserDocument): Query<number> {
+    return model.update({username: user.username}, {...user})
   }
 
-  delete(user: User) {
-    return UserModel.remove({username: user.username})
+  delete(user: UserDocument) {
+    return model.remove({username: user.username})
   }
 }
