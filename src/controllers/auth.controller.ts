@@ -6,7 +6,7 @@
 //  Copyright © 2019 Yukihira Nanako. All rights reserved.
 //
 import { Request, Response, NextFunction } from "express"
-import { AuthRepository } from '../repositories/auth.repository'
+import { AuthRepository } from "../repositories/auth.repository"
 import { User } from "../models/User"
 
 const authRepo = new AuthRepository()
