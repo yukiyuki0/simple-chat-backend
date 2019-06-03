@@ -15,7 +15,7 @@ const authRepo = new AuthRepository()
 export const register = async (req: Request, res: Response, next: NextFunction) => {
   const {username, password} = req.body
 
-  if (!username || !password) return res.status(500).send({messages: "No input data"})
+  if (!username || !password) return res.status(403).send({messages: "No input data"})
 
   const user = <UserDocument>{
     username: username,
@@ -25,7 +25,7 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
   try {
     const users = await authRepo.read({username: user.username})
     if (users.length) {
-      return res.status(500).send({messages: "Exist user"})
+      return res.status(403).send({messages: "Exist user"})
     }
 
     await authRepo.create(user)
@@ -51,7 +51,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
       const result = await users[0].comparePassword(password)
 
       if (!result) {
-        return res.status(200).json({result: false, messages: 'Login failed\nPlease confirm your password'})
+        return res.status(403).json({result: false, messages: 'Login failed\nPlease confirm your password'})
       }
 
       return res.status(200).json({result: true, messages: 'Login successful', token: sign(users[0].toJSON(), SECRET_KEY, {
