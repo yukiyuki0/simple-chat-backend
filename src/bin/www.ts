@@ -33,19 +33,20 @@ import socketioJwt from "socketio-jwt"
     })
 
     // set authorization for socket.io
-    // io.sockets
-    //   .on('connection', socketioJwt.authorize({
-    //     secret: (process.env.SECRET_KEY as string),
-    //     decodedPropertyName: "decoded_token",
-    //     timeout: 15000 // 15 seconds to send the authentication message
-    //   })).on('authenticated', function(socket: any) {
-    //   console.log(socket.decoded_token)
-    //   console.log('hello! ' + socket.decoded_token.username);
-    // });
+    io.sockets.on('connection', socketioJwt.authorize({
+        secret: (process.env.SECRET_KEY as string),
+        decodedPropertyName: "decoded_token",
+        timeout: 15000 // 15 seconds to send the authentication message
+      })
+    ).on('authenticated', function(socket: any) {
+      console.log(socket.decoded_token)
+      console.log('hello! ' + socket.decoded_token.username);
 
-    io.sockets.on('connection', (socket: any) => {
-      console.log('hello! ' + socket.decoded_token.username)
+      socket.on('requestRoomList', function(socket: any) {
+        console.log("recv data")
+      })
     })
+
 
   } catch (e) {
     console.error('✗ Unable to connect to the database:', e.message)

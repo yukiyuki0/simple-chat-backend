@@ -20,11 +20,11 @@ export default class Socket {
     this.server = createServer(server)
     this.io = socketIO(this.server)
 
-    this.io.use(socketioJwt.authorize({
-      secret: (process.env.SECRET_KEY as string),
-      decodedPropertyName: "decodedToken",
-      handshake: true
-    }))
+    // this.io.use(socketioJwt.authorize({
+    //   secret: (process.env.SECRET_KEY as string),
+    //   decodedPropertyName: "decodedToken",
+    //   handshake: true
+    // }))
   }
 
   public get getServer() {
