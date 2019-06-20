@@ -35,21 +35,23 @@ const RoomList: Room[] = [];
       console.log('Socket server listening on', process.env.SOCKET_PORT)
     })
 
-    io.on('connection', (socket: any) => {
-      console.log("Socket connected :", socket.id)
-      socket.on('requestRoomList', (socket: any) => {
-        console.log("recv data")
-      })
-      socket.on('createRoom', (data: any) => {
-        console.log(data)
-        const room = Room.create(data.title)
-        RoomList.push(room)
-        console.log(RoomList)
-      })
-      socket.on('disconnect', () => {
-        console.log("Disconnected")
-      })
+    io.on('connection',  (socket: any) => {
+
+      console.log('hello! ', socket.decodedToken);
+
+        socket.on('requestRoomList', () => {
+          console.log("recv requestRoomList")
+        })
+
+        socket.on('createRoom', (data: any) => {
+          console.log(data)
+          const room = Room.create(data.name)
+          RoomList.push(room)
+          console.log(RoomList)
+
+        })
     })
+
 
   } catch (e) {
     console.error('✗ Unable to connect to the database:', e.message)
