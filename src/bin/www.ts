@@ -11,6 +11,9 @@ import Socket from "../Socket"
 import { Application } from "express"
 import { connect } from "mongoose"
 import socketioJwt from "socketio-jwt"
+import { Room } from "../models/Room"
+
+const RoomList: Room[] = [];
 
 (async () => {
   const port: number = Number(process.env.PORT) || 3000
@@ -32,21 +35,21 @@ import socketioJwt from "socketio-jwt"
       console.log('Socket server listening on', process.env.SOCKET_PORT)
     })
 
-    // set authorization for socket.io
-    io.sockets.on('connection', socketioJwt.authorize({
-        secret: (process.env.SECRET_KEY as string),
-        decodedPropertyName: "decoded_token",
-        timeout: 15000 // 15 seconds to send the authentication message
-      })
-    ).on('authenticated', function(socket: any) {
-      console.log(socket.decoded_token)
-      console.log('hello! ' + socket.decoded_token.username);
-
-      socket.on('requestRoomList', function(socket: any) {
+    io.on('connection', (socket: any) => {
+      console.log("Socket connected :", socket.id)
+      socket.on('requestRoomList', (socket: any) => {
         console.log("recv data")
       })
+      socket.on('createRoom', (data: any) => {
+        console.log(data)
+        const room = Room.create(data.title)
+        RoomList.push(room)
+        console.log(RoomList)
+      })
+      socket.on('disconnect', () => {
+        console.log("Disconnected")
+      })
     })
-
 
   } catch (e) {
     console.error('✗ Unable to connect to the database:', e.message)
