@@ -39,19 +39,19 @@ const Rooms: IRoom[] = [];
 
       console.log('hello! ', socket.decodedToken);
 
-        socket.on('requestRoomList', () => {
+        socket.on('request-load-room', () => {
           console.log("recv requestRoomList")
-
+          socket.emit('load-room', Rooms)
         })
 
-        socket.on('createRoom', (data: any) => {
+        socket.on('create-room', (data: any) => {
           const room: IRoom = <IRoom>{
             title: data.name,
             users: {},
             maxUser: 10
           }
           Rooms.push(room)
-          io.emit('newRoom', room)
+          io.emit('new-room', room)
         })
     })
 
