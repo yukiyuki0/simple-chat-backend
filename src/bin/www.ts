@@ -11,9 +11,9 @@ import Socket from "../Socket"
 import { Application } from "express"
 import { connect } from "mongoose"
 import socketioJwt from "socketio-jwt"
-import { Room } from "../models/Room"
+import { IRoom, IUser } from "../models/Room"
 
-const RoomList: Room[] = [];
+const Rooms: IRoom[] = [];
 
 (async () => {
   const port: number = Number(process.env.PORT) || 3000
@@ -41,14 +41,17 @@ const RoomList: Room[] = [];
 
         socket.on('requestRoomList', () => {
           console.log("recv requestRoomList")
+
         })
 
         socket.on('createRoom', (data: any) => {
-          console.log(data)
-          const room = Room.create(data.name)
-          RoomList.push(room)
-          console.log(RoomList)
-
+          const room: IRoom = <IRoom>{
+            title: data.name,
+            users: {},
+            maxUser: 10
+          }
+          Rooms.push(room)
+          io.emit('newRoom', room)
         })
     })
 

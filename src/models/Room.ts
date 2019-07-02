@@ -1,6 +1,10 @@
-export class Room {
-  constructor(private title: string) {}
-  public static create(title: string) {
-    return new Room(title)
-  }
+
+export interface IUser {
+  name: string
+}
+
+export interface IRoom {
+  title: string
+  users: IUser[]
+  maxUser?: number
 }
