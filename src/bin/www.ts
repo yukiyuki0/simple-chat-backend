@@ -12,8 +12,10 @@ import { Application } from "express"
 import { connect } from "mongoose"
 import socketioJwt from "socketio-jwt"
 import { IRoom, IUser } from "../models/Room"
+import { IMessage } from "../models/Message"
 
 const Rooms: IRoom[] = [];
+const Messages: IMessage[] = [];
 
 (async () => {
   const port: number = Number(process.env.PORT) || 3000
@@ -39,20 +41,26 @@ const Rooms: IRoom[] = [];
 
       console.log('hello! ', socket.decodedToken);
 
-        socket.on('request-load-room', () => {
-          console.log("recv requestRoomList")
-          socket.emit('load-room', Rooms)
-        })
+      socket.on('request-load-room', () => {
+        console.log("recv requestRoomList")
+        socket.emit('load-room', Rooms)
+      })
 
-        socket.on('create-room', (data: any) => {
-          const room: IRoom = <IRoom>{
-            title: data.name,
-            users: {},
-            maxUser: 10
-          }
-          Rooms.push(room)
-          io.emit('new-room', room)
-        })
+      socket.on('create-room', (data: any) => {
+        const room: IRoom = <IRoom>{
+          title: data.name,
+          users: {},
+          maxUser: 10
+        }
+        Rooms.push(room)
+        io.emit('new-room', room)
+      })
+
+      socket.on('join-room', (data: any) => {
+        const room = Rooms.find(o => o.title === data.id)
+        if (room) socket.join(room.title)
+      })
+
     })
 
 
