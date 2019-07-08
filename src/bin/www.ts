@@ -12,10 +12,9 @@ import { Application } from "express"
 import { connect } from "mongoose"
 import socketioJwt from "socketio-jwt"
 import { IRoom, IUser } from "../models/Room"
-import { IMessage } from "../models/Message"
+import { IMessages, IMessage } from "../models/Message"
 
 const Rooms: IRoom[] = [];
-const Messages: IMessage[] = [];
 
 (async () => {
   const port: number = Number(process.env.PORT) || 3000
@@ -50,7 +49,8 @@ const Messages: IMessage[] = [];
         const room: IRoom = <IRoom>{
           title: data.name,
           users: {},
-          maxUser: 10
+          maxUser: 10,
+          messages: <IMessages>[]
         }
         Rooms.push(room)
         io.emit('new-room', room)
@@ -59,6 +59,36 @@ const Messages: IMessage[] = [];
       socket.on('join-room', (data: any) => {
         const room = Rooms.find(o => o.title === data.id)
         if (room) socket.join(room.title)
+      })
+
+      socket.on('saved-message', (data: any) => {
+        console.log(data)
+
+        const room = Rooms.find(o => o.title === data.id)
+        if (!room) socket.emit('exit-room')
+
+        if (room !== undefined) {
+          console.log(room.messages)
+          socket.emit('receive-message', room.messages) // send messages to client
+        }
+
+      })
+
+      socket.on('sent-message', (data: any) => {
+        console.log(data)
+        const message: IMessage = <IMessage>{
+          roomId: data.roomId,
+          content: data.content,
+          username: socket.decodedToken.username,
+          datetime: new Date()
+        }
+
+        const room = Rooms.find(o => o.title === data.roomId)
+        if (!room) socket.emit('exit-room')
+        if (room !== undefined) {
+          room.messages.push(message)
+        }
+
       })
 
     })
