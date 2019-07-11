@@ -69,7 +69,7 @@ const Rooms: IRoom[] = [];
 
         if (room !== undefined) {
           console.log(room.messages)
-          socket.emit('receive-message', room.messages) // send messages to client
+          socket.emit('saved-message', room.messages) // send messages to client
         }
 
       })
@@ -87,6 +87,7 @@ const Rooms: IRoom[] = [];
         if (!room) socket.emit('exit-room')
         if (room !== undefined) {
           room.messages.push(message)
+          socket.to(room.title).emit('receive-message', message)
         }
 
       })
