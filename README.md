@@ -4,7 +4,7 @@ Backend of real time simple chat app using express, socket.io, mongoose
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. I am not recommend use the current project on a live system.
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. I do not recommend use the current project on a live system.
 
 ### Prerequisites
 
