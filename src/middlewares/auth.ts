@@ -16,16 +16,14 @@ const wrapAsync = (fn: any) => {
 }
 
 export const authMiddleware = wrapAsync(async (req: Request, res: Response, next: NextFunction) => {
-  let token = req.get('Authorization') || req.body.token || req.query.token || req.headers['x-access-token']
+  let token: string = req.get('Authorization') || req.body.token || req.query.token || req.headers['x-access-token']
 
-  // no token
-  // return an error
-  if (!token) {
+  if (token.startsWith("Bearer ")) {
+    token = token.substring(7, token.length)
+  } else {
+    // no token
+    // return an error
     return res.status(403).json({result: false, messages: 'Not logged in'})
-  }
-
-  if ( token.split(' ')[0] === 'Bearer' ) {
-    token = token.split(' ')[1]
   }
 
   const p = await new Promise((resolve: any, reject: any) => {
@@ -44,6 +42,7 @@ export const authMiddleware = wrapAsync(async (req: Request, res: Response, next
 
 
   try {
+    // Afterwards, Will be implements interface of object.
     (req as any).userdata = await p
     next()
   } catch (e) {

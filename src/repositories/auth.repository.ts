@@ -10,7 +10,6 @@ import { DocumentQuery, Query } from "mongoose"
 import { User, UserDocument, model } from "../models/User"
 
 export class AuthRepository {
-  constructor() {}
 
   create(user: UserDocument): Promise<User> {
     const u = new model(user)
@@ -28,4 +27,5 @@ export class AuthRepository {
   delete(user: UserDocument) {
     return model.remove({username: user.username})
   }
+
 }
